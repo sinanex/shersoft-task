@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shersoft/register.dart';
+import 'package:shersoft/view/home/homepage.dart';
+import 'package:shersoft/view/login&register/register.dart';
+import 'package:shersoft/view/login&register/widget/widget.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController _emailCOntroller = TextEditingController();
@@ -48,8 +50,8 @@ class LoginPage extends StatelessWidget {
                       }, child: Text("create")),
                     ],
                   ),
-                  _loginform(controller: _emailCOntroller, lable: 'Email'),
-                  _loginform(
+                  loginform(controller: _emailCOntroller, lable: 'Email'),
+                  loginform(
                       controller: _passwordController, lable: 'Password'),
                   Row(
                     children: [
@@ -71,7 +73,9 @@ class LoginPage extends StatelessWidget {
                             backgroundColor: Color(0xFF0A1EBE),
                             foregroundColor: Colors.white,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_)=>Homepage()));
+                          },
                           child: Text("Login")),
                     ),
                   )
@@ -84,27 +88,5 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Padding _loginform(
-      {required String lable, required TextEditingController controller}) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        spacing: 10,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(lable),
-          TextField(
-            controller: controller,
-            decoration: InputDecoration(
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                      width: 0.5,
-                    ))),
-          ),
-        ],
-      ),
-    );
+  
   }
-}
