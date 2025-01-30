@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shersoft/view/home/homepage.dart';
 import 'package:shersoft/view/login&register/login.dart';
 
@@ -13,8 +14,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  MaterialApp(
-      theme: ThemeData.light(),
-      home: LoginPage(),
+
+      theme: ThemeData(
+        textTheme: GoogleFonts.poppinsTextTheme(),
+      ),
+      home: Homepage(),
       debugShowCheckedModeBanner: false,
 
     );

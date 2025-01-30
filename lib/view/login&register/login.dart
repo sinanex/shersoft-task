@@ -15,9 +15,8 @@ class LoginPage extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
+              end: Alignment.bottomCenter,
               colors: [Colors.blue[700]!, Colors.blue[400]!]),
-              
         ),
         child: Center(
           child: Padding(
@@ -45,14 +44,18 @@ class LoginPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text('Don\'t have an company'),
-                      TextButton(onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>RegisterPage()));
-                      }, child: Text("create")),
+                      TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RegisterPage()));
+                          },
+                          child: Text("create")),
                     ],
                   ),
                   loginform(controller: _emailCOntroller, lable: 'Email'),
-                  loginform(
-                      controller: _passwordController, lable: 'Password'),
+                  loginform(controller: _passwordController, lable: 'Password'),
                   Row(
                     children: [
                       Checkbox(
@@ -74,11 +77,12 @@ class LoginPage extends StatelessWidget {
                             foregroundColor: Colors.white,
                           ),
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (_)=>Homepage()));
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (_) => Homepage()));
                           },
                           child: Text("Login")),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -87,6 +91,4 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
-
-  
-  }
+}
