@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -37,13 +38,25 @@ class UserController extends ChangeNotifier {
   }
 
   Future<String?> registerUser() async {
+    if (nameController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        adreesController.text.isEmpty ||
+        phoneController.text.isEmpty ||
+        passwordController.text.isEmpty) {
+          log("empty");
+        }
     try {
-    UserCredential userCredential = await authentication.createUserWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text);
-          User? user = userCredential.user;
-          if(user != null){
-            user.updateProfile();
-          }
+      UserCredential userCredential =
+          await authentication.createUserWithEmailAndPassword(
+              email: emailController.text, password: passwordController.text);
+      User? user = userCredential.user;
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('user').doc(user.uid).set({
+          "address": adreesController.text,
+          "company": nameController.text,
+          "phone": phoneController.text,
+        });
+      }
       log("register success");
       return "register success";
     } on FirebaseAuthException catch (e) {
