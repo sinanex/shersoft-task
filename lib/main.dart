@@ -8,8 +8,6 @@ import 'package:shersoft/controller/dataController.dart';
 import 'package:shersoft/controller/login.dart';
 import 'package:shersoft/firebase_options.dart';
 import 'package:shersoft/model/localdb.dart';
-import 'package:shersoft/view/home/homepage.dart';
-import 'package:shersoft/view/login&register/register.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shersoft/view/splash.dart';
 void main() async {

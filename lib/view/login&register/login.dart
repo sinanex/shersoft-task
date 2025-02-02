@@ -88,7 +88,7 @@ class LoginPage extends StatelessWidget {
                                     .loginUser(
                                         email: emailController.text.trim(),
                                         password:
-                                            passwordController.text.trim())
+                                            passwordController.text.trim(),context: context)
                                     .then((value) {
                                   if (value != null) {
                                     // ignore: use_build_context_synchronously

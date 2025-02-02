@@ -15,8 +15,10 @@ class UserController extends ChangeNotifier {
    String? uid;
 
   Future<String?> loginUser(
-      {required String email, required String password}) async {
-    try {
+
+      {required String email, required String password,BuildContext? context}) async {
+
+          try {
       await authentication.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -25,13 +27,7 @@ class UserController extends ChangeNotifier {
       notifyListeners();
       return "success";
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        log('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        log('Wrong password provided.');
-      } else {
-        log('Error: ${e.code}');
-      }
+        ScaffoldMessenger.of(context!).showSnackBar(SnackBar(content:Text(e.code.toString())));
 
       notifyListeners();
     } catch (e) {
@@ -43,6 +39,7 @@ class UserController extends ChangeNotifier {
 
   Future<String?> registerUser(
       {required String email,
+      BuildContext? context,
       required String password,
       required String name,
       required String address,
@@ -68,6 +65,7 @@ class UserController extends ChangeNotifier {
       log("register success");
       return "register success";
     } on FirebaseAuthException catch (e) {
+            ScaffoldMessenger.of(context!).showSnackBar(SnackBar(content:Text(e.code.toString())));
       log(e.toString());
     }
     return null;

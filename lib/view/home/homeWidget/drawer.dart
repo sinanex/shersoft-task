@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shersoft/controller/dataController.dart';
 import 'package:shersoft/controller/login.dart';
 import 'package:shersoft/view/home/accounts.dart';
 

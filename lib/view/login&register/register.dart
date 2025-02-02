@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -58,7 +57,7 @@ class RegisterPage extends StatelessWidget {
                       ElevatedButton(
                           onPressed: () {
                             provider
-                                .registerUser(
+                                .registerUser(context: context,
                                     email: emailController.text,
                                     password: passwordController.text,
                                     name: nameController.text,
