@@ -4,20 +4,24 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shersoft/controller/dataController.dart';
 import 'package:shersoft/controller/login.dart';
 import 'package:shersoft/firebase_options.dart';
+import 'package:shersoft/model/localdb.dart';
 import 'package:shersoft/view/login&register/register.dart';
-
+import 'package:hive_flutter/hive_flutter.dart';
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   try {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  print("succeess");
-} on Exception catch (e) {
-  log(e.toString());
-}
+    WidgetsFlutterBinding.ensureInitialized();
+    await Hive.initFlutter();
+    Hive.registerAdapter(UserAcoountDbAdapter());
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print("succeess");
+  } on Exception catch (e) {
+    log(e.toString());
+  }
   runApp(MyApp());
 }
 
@@ -26,8 +30,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => UserController(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => UserController(),
+        ),
+       ChangeNotifierProvider(create: (context) => Datacontroller(),)
+      ],
       child: MaterialApp(
         theme: ThemeData(
           textTheme: GoogleFonts.poppinsTextTheme(),

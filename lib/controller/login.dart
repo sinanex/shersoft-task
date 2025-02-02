@@ -3,24 +3,26 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shersoft/controller/localdb.dart';
+import 'package:shersoft/model/localdb.dart';
 
 class UserController extends ChangeNotifier {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController adreesController = TextEditingController();
-  final FirebaseAuth authentication = FirebaseAuth.instance;
 
-  Future<void> loginUser() async {
+
+  final FirebaseAuth authentication = FirebaseAuth.instance;
+  final FlutterSecureStorage _flutterSecureStorage = FlutterSecureStorage();
+
+  Future<String?> loginUser({required String email,required String password}) async {
     try {
       await authentication.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+        email: email,
+        password: password,
       );
       log("login success");
-
       notifyListeners();
+      return "success";
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         log('No user found for that email.');
@@ -35,26 +37,27 @@ class UserController extends ChangeNotifier {
       log('Error: $e');
       notifyListeners();
     }
+    return null;
   }
 
-  Future<String?> registerUser() async {
-    if (nameController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        adreesController.text.isEmpty ||
-        phoneController.text.isEmpty ||
-        passwordController.text.isEmpty) {
-          log("empty");
-        }
+  Future<String?> registerUser({required String email,required String password,required String name,required String address,required String phone}) async {
+    if (email.isEmpty ||
+   phone.isEmpty ||
+       address.isEmpty ||
+      password.isEmpty ||
+      name.isEmpty) {
+      log("empty");
+    }
     try {
       UserCredential userCredential =
           await authentication.createUserWithEmailAndPassword(
-              email: emailController.text, password: passwordController.text);
+              email: email, password: password);
       User? user = userCredential.user;
       if (user != null) {
         await FirebaseFirestore.instance.collection('user').doc(user.uid).set({
-          "address": adreesController.text,
-          "company": nameController.text,
-          "phone": phoneController.text,
+          "address": address,
+          "company":name,
+          "phone": phone,
         });
       }
       log("register success");
@@ -62,5 +65,30 @@ class UserController extends ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       log(e.toString());
     }
+    return null;
+  }
+
+  Future<void> getUserMetaData() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    try {
+      if (user != null) {
+        final docs = await FirebaseFirestore.instance
+            .collection('user')
+            .doc(user.uid)
+            .get();
+        if (docs.exists) {
+          log(docs.data().toString());
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      log(e.toString());
+    }
+  }
+
+  Future<void> addAccounts({required String email,required String password}) async {
+    final data = UserAcoountDb(
+        email: email, password: password);
+    addData(data);
   }
 }
