@@ -74,6 +74,7 @@ class Datacontroller with ChangeNotifier {
   try {
        await _firestore.collection('cash_book').add(data.toJson());
        log("success");
+       getdata('All');
   }on FirebaseException catch (e) {
     log(e.toString());
   }
