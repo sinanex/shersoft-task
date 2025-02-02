@@ -4,7 +4,10 @@ class Datamodel {
   String? cashout;
   String? day;
   String time;
-  Datamodel({required this.cashIn, required this.cashout, required this.date,required this.day,required this.time});
+  String? uid;
+  Datamodel({
+    this.uid,
+    required this.cashIn, required this.cashout, required this.date,required this.day,required this.time});
   factory Datamodel.fromFireBase(Map<String, dynamic> docs) {
     return Datamodel(
       day: docs['day'],
@@ -18,6 +21,7 @@ class Datamodel {
       'day':day,
       'cashout':cashout,
       'cashin':cashIn,
+      'userId':uid,
     };
   }
 }

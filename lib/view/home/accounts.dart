@@ -4,11 +4,23 @@ import 'package:shersoft/controller/localdb.dart';
 import 'package:shersoft/controller/login.dart';
 import 'package:shersoft/view/home/homepage.dart';
 
-class AccountsPage extends StatelessWidget {
+class AccountsPage extends StatefulWidget {
   const AccountsPage({super.key});
 
   @override
+  State<AccountsPage> createState() => _AccountsPageState();
+}
+
+class _AccountsPageState extends State<AccountsPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: ValueListenableBuilder(
         valueListenable: valueNotifier,

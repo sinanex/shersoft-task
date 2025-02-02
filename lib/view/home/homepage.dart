@@ -24,7 +24,10 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     super.initState();
-    Provider.of<UserController>(context, listen: false).getUserMetaData();
+ WidgetsBinding.instance.addPostFrameCallback((_){
+      Provider.of<UserController>(context, listen: false).getUserMetaData();
+    Provider.of<Datacontroller>(context, listen: false).getdata();
+ });
   }
 
   @override
@@ -239,9 +242,10 @@ class _HomepageState extends State<Homepage> {
                               cashout: _cashout.text.trim(),
                               date: date,
                               day: day,
+                              uid: Provider.of<UserController>(context,listen: false).uid,
                               time: time);
                           Provider.of<Datacontroller>(context, listen: false)
-                              .addDatafireBase(data: data);
+                           .addDatafireBase(data: data);
                         },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,

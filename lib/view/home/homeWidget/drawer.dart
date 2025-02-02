@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shersoft/controller/dataController.dart';
+import 'package:shersoft/controller/login.dart';
 import 'package:shersoft/view/home/accounts.dart';
 
 Drawer drawer(BuildContext context) {
@@ -11,7 +14,8 @@ Drawer drawer(BuildContext context) {
           height: 250,
         ),
         ListTile(
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context)=>AccountsPage())),
+          onTap: () => Navigator.push(
+              context, MaterialPageRoute(builder: (context) => AccountsPage())),
           title: Text("Accounts"),
           leading: Icon(Icons.groups_outlined),
         ),
@@ -28,6 +32,10 @@ Drawer drawer(BuildContext context) {
           leading: Icon(Icons.settings_outlined),
         ),
         ListTile(
+          onTap: () {
+            Provider.of<UserController>(context, listen: false)
+                .logoutUser(context);
+          },
           title: Text("Logout"),
           leading: Icon(Icons.logout),
         )

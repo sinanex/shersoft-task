@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 import 'package:shersoft/model/dataModel.dart';
 import 'package:flutter/material.dart';
 
@@ -12,71 +14,99 @@ class Datacontroller with ChangeNotifier {
 
   List<Datamodel> get filteredData => _filteredData;
 
-  Future<void> getdata(String filter) async {
-    _filteredData = await _fetchData(filter);
+  Future<void> getdata([String? filter]) async {
+       filter ??= "All";
+    _filteredData = await fetchData(filter);
     notifyListeners();
   }
 
   void selectedColor(String filter) {
     if (selected != filter) {
       selected = filter;
+      notifyListeners();
     }
-    notifyListeners();
   }
 
-  Future<List<Datamodel>> _fetchData(String filter) async {
+  Future<List<Datamodel>> fetchData(String interval) async {
+ 
+    log(interval);
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print("User is not logged in.");
+      return [];
+    }
+
+    String today = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    Query<Map<String, dynamic>> query = _firestore
+        .collection('cash_book')
+        .doc(user.uid)
+        .collection('transactions');
+
+    switch (interval) {
+      case 'Daily':
+        query = query.where('date', isEqualTo: today);
+        log(today);
+        break;
+
+      case 'Weekly':
+        DateTime sevenDaysAgo = DateTime.now().subtract(Duration(days: 7));
+        String formattedDateSevenDaysAgo =
+            DateFormat('dd-MM-yyyy').format(sevenDaysAgo);
+            log(formattedDateSevenDaysAgo);
+        query = query.where('date',
+            isGreaterThanOrEqualTo: formattedDateSevenDaysAgo);
+        break;
+
+      case 'Monthly':
+        DateTime firstDayOfMonth =
+            DateTime(DateTime.now().year, DateTime.now().month, 1);
+        String formattedFirstDayOfMonth =
+            DateFormat('dd-MM-yyyy').format(firstDayOfMonth);
+        query = query.where('date',
+            isGreaterThanOrEqualTo: formattedFirstDayOfMonth);
+        break;
+
+      case 'All':
+        break;
+
+      default:
+        print("Invalid interval selected");
+        return [];
+    }
+
     try {
-      DateTime now = DateTime.now();
-      CollectionReference collectionRef = _firestore.collection('cash_book');
-      Query query = collectionRef;
+      var querySnapshot = await query.get();
 
-      if (filter == "Today") {
-        DateTime startOfDay = DateTime(now.year, now.month, now.day);
-        DateTime endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59);
-        query = query
-            .where('timestamp',
-                isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
-            .where('timestamp',
-                isLessThanOrEqualTo: Timestamp.fromDate(endOfDay));
-      } else if (filter == "Weekly") {
-        DateTime startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-        DateTime endOfWeek = startOfWeek.add(Duration(days: 6));
-        query = query
-            .where('timestamp',
-                isGreaterThanOrEqualTo: Timestamp.fromDate(startOfWeek))
-            .where('timestamp',
-                isLessThanOrEqualTo: Timestamp.fromDate(endOfWeek));
-      } else if (filter == "Monthly") {
-        DateTime startOfMonth = DateTime(now.year, now.month, 1);
-        DateTime endOfMonth = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
-        query = query
-            .where('timestamp',
-                isGreaterThanOrEqualTo: Timestamp.fromDate(startOfMonth))
-            .where('timestamp',
-                isLessThanOrEqualTo: Timestamp.fromDate(endOfMonth));
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs
+            .map((doc) => Datamodel.fromFireBase(doc.data()))
+            .toList();
+      } else {
+  
+        return [];
       }
-
-      QuerySnapshot querySnapshot = await query.get();
-
-      List<Datamodel> data = querySnapshot.docs.map((doc) {
-        Map<String, dynamic> docData = doc.data() as Map<String, dynamic>;
-        return Datamodel.fromFireBase(docData);
-      }).toList();
-
-      return data;
-    } catch (e) {
-      log("Error fetching data: $e");
+    } on FirebaseException catch (e) {
+      log(e.toString());
       return [];
     }
   }
 
-  void addDatafireBase({required Datamodel data}) async {
-  try {
-       await _firestore.collection('cash_book').add(data.toJson());
-       log("success");
-       getdata('All');
-  }on FirebaseException catch (e) {
-    log(e.toString());
-  }
+  Future<void> addDatafireBase({required Datamodel data}) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        await _firestore
+            .collection('cash_book')
+            .doc(user.uid)
+            .collection('transactions')
+            .add(data.toJson());
+      } on FirebaseException catch (e) {
+        log("Firebase error: ${e.message}");
+      } catch (e) {
+        log("Error adding data: $e");
+      }
+    } else {
+      print("User not logged in.");
+    }
   }
 }
