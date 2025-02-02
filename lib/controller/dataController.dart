@@ -69,4 +69,13 @@ class Datacontroller with ChangeNotifier {
       return [];
     }
   }
+
+  void addDatafireBase({required Datamodel data}) async {
+  try {
+       await _firestore.collection('cash_book').add(data.toJson());
+       log("success");
+  }on FirebaseException catch (e) {
+    log(e.toString());
+  }
+  }
 }

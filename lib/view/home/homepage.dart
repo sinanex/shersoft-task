@@ -1,11 +1,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shersoft/controller/dataController.dart';
+import 'package:shersoft/controller/localdb.dart';
 import 'package:shersoft/controller/login.dart';
+import 'package:shersoft/model/dataModel.dart';
 import 'package:shersoft/view/home/homeWidget/drawer.dart';
-import 'package:shersoft/view/home/homeWidget/widget.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -15,6 +17,9 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  TextEditingController _cashin = TextEditingController();
+  TextEditingController _cashout = TextEditingController();
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -64,22 +69,31 @@ class _HomepageState extends State<Homepage> {
       ),
       body: Column(
         children: [
-          Consumer<Datacontroller>(
-            builder:(context, value, child) =>  Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: ['All', 'Daily', 'Weekly', 'Monthly'].map((filter) {
-                bool isSelected = value.selected == filter;
-                return ElevatedButton(
-                  onPressed: () {
-                    value.selectedColor(filter);
-                    value.getdata(filter);
-                  },
-                  child: Text(filter),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isSelected? Colors.blue:Colors.grey,
-                  ),
-                );
-              }).toList(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Consumer<Datacontroller>(
+              builder: (context, value, child) => Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: ['All', 'Daily', 'Weekly', 'Monthly'].map((filter) {
+                  bool isSelected = value.selected == filter;
+                  return SizedBox(
+                    height: 30,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        value.selectedColor(filter);
+                        value.getdata(filter);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor:
+                            isSelected ? Colors.white : Color(0XFF0008B4),
+                        backgroundColor:
+                            isSelected ? Color(0XFF0008B4) : Colors.white,
+                      ),
+                      child: Text(filter),
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
           ),
           Padding(
@@ -143,8 +157,7 @@ class _HomepageState extends State<Homepage> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-           
-                                  Text(data.cashIn ?? "N/A"),
+                                  // Text(data.date.toString() ?? ""),
                                 ],
                               ),
                               Text(
@@ -171,14 +184,66 @@ class _HomepageState extends State<Homepage> {
               },
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              containerButton(text: "Cash IN", color: Color(0XFF30CB76)),
-              containerButton(text: "Cash OUT", color: Color(0XFFC20000)),
-            ],
-          ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(0XFF0008B4),
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        onPressed: () {
+          DateTime datetime = DateTime.now();
+
+          final date = DateFormat('dd/MM/yyyy').format(datetime);
+          final day = DateFormat('EEEE').format(datetime);
+          final time = DateFormat('hh:mm:a').format(datetime);
+
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                backgroundColor: Colors.white,
+                title: Text("Add Data"),
+                actions: [
+                  TextField(
+                    controller: _cashin,
+                    decoration: InputDecoration(hintText: 'cash in'),
+                  ),
+                  TextField(
+                    controller: _cashout,
+                    decoration: InputDecoration(hintText: 'cash out'),
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Center(
+                    child: SizedBox(
+                      width: 150,
+                      height: 40,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          final data = Datamodel(
+                              cashIn: _cashin.text.trim(),
+                              cashout: _cashout.text.trim(),
+                              date: date,
+                              day: day,
+                              time: time);
+                        Provider.of<Datacontroller>(context,listen: false).addDatafireBase(data: data);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: const Color(0XFF0008B4),
+                        ),
+                        child: Text("add"),
+                      ),
+                    ),
+                  )
+                ],
+              );
+            },
+          );
+        },
       ),
     );
   }
