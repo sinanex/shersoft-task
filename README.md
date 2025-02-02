@@ -29,7 +29,7 @@ A Flutter-based money expense tracker app that helps users manage their finances
    ```
 2. Navigate to the project directory:
    ```sh
-   cd money-expense-tracker
+   cd shersoft-task
    ```
 3. Install dependencies:
    ```sh
