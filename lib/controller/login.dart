@@ -13,7 +13,9 @@ class UserController extends ChangeNotifier {
   final FlutterSecureStorage _flutterSecureStorage = FlutterSecureStorage();
 
    String? uid;
-
+String? companyName;
+String? phone;
+String? address; 
   Future<String?> loginUser(
 
       {required String email, required String password,BuildContext? context}) async {
@@ -83,9 +85,13 @@ class UserController extends ChangeNotifier {
             .doc(user.uid)
             .get();
         if (docs.exists) {
+      companyName = docs.data()?['company']; 
+      address = docs.data()?['address']; 
+      phone = docs.data()?['phone']; 
           log(docs.data().toString());
         }
       }
+      notifyListeners();
     } on FirebaseAuthException catch (e) {
       log(e.toString());
     }

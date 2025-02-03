@@ -100,6 +100,7 @@ class Datacontroller with ChangeNotifier {
             .doc(user.uid)
             .collection('transactions')
             .add(data.toJson());
+            getdata();
       } on FirebaseException catch (e) {
         log("Firebase error: ${e.message}");
       } catch (e) {

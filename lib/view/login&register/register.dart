@@ -1,8 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shersoft/controller/localdb.dart';
 import 'package:shersoft/controller/login.dart';
+import 'package:shersoft/model/localdb.dart';
 import 'package:shersoft/view/home/homepage.dart';
+import 'package:shersoft/view/login&register/login.dart';
 import 'package:shersoft/view/login&register/widget/widget.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -30,7 +33,7 @@ class RegisterPage extends StatelessWidget {
               padding: const EdgeInsets.all(20.0),
               child: Container(
                 width: double.infinity,
-                height: 700,
+                height: 760,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.white,
@@ -46,6 +49,17 @@ class RegisterPage extends StatelessWidget {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 30),
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Already have an account"),
+                          TextButton(onPressed: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
+                          }, child: Text("Login",style: TextStyle(
+                            color: Colors.blue,
+                          ),)),
+                        ],
+                      ),
                       loginform(
                           controller: nameController, lable: "Company name"),
                       loginform(controller: emailController, lable: "Email"),
@@ -54,28 +68,42 @@ class RegisterPage extends StatelessWidget {
                           lable: "phone number", controller: phoneController),
                       loginform(
                           lable: "password", controller: passwordController),
-                      ElevatedButton(
-                          onPressed: () {
-                            provider
-                                .registerUser(context: context,
-                                    email: emailController.text,
-                                    password: passwordController.text,
-                                    name: nameController.text,
-                                    address: adreesController.text,
-                                    phone: phoneController.text)
-                                .then((value) {
-                              if (value != null) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => Homepage()));
-                                provider.addAccounts(
-                                    email: emailController.text,
-                                    password: passwordController.text);
-                              }
-                            });
-                          },
-                          child: Text("Login"))
+                       Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: Color(0xFF0A1EBE),
+                                foregroundColor: Colors.white,
+                              ),
+                              onPressed: () {
+                                provider
+                                    .registerUser(
+                                      address: adreesController.text,
+                                      name: nameController.text,
+                                      phone: phoneController.text,
+                                        email: emailController.text.trim(),
+                                        password:
+                                            passwordController.text.trim(),context: context)
+                                    .then((value) {
+                                  if (value != null) {
+                                    // ignore: use_build_context_synchronously
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                Homepage()));
+                                                final data = UserAcoountDb(email: emailController.text.trim(), password: passwordController.text.trim());
+                                                addData(data);
+                                  }
+                                });
+                              },
+                              child: Text("Register")),
+                        ),
+                      ),
                     ],
                   ),
                 ),

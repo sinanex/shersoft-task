@@ -20,7 +20,7 @@ class _AccountsPageState extends State<AccountsPage> {
   }
   @override
   Widget build(BuildContext context) {
-
+    getData();
     return Scaffold(
       body: ValueListenableBuilder(
         valueListenable: valueNotifier,

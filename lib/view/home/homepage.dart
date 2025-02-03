@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -23,10 +22,10 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     super.initState();
- WidgetsBinding.instance.addPostFrameCallback((_){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserController>(context, listen: false).getUserMetaData();
-    Provider.of<Datacontroller>(context, listen: false).getdata();
- });
+      Provider.of<Datacontroller>(context, listen: false).getdata();
+    });
   }
 
   @override
@@ -34,7 +33,9 @@ class _HomepageState extends State<Homepage> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Color(0XFFF5F5F5),
-      drawer: drawer(context),
+      drawer: Consumer<UserController>(
+        builder: (context, value, child) =>
+     drawer(context:  context ,company:  value.companyName??'',phone:  value.phone??'')),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
@@ -69,8 +70,8 @@ class _HomepageState extends State<Homepage> {
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: () async{
-          Provider.of<Datacontroller>(context,listen: false).getdata('All');
+        onRefresh: () async {
+          Provider.of<Datacontroller>(context, listen: false).getdata('All');
         },
         child: Column(
           children: [
@@ -110,15 +111,18 @@ class _HomepageState extends State<Homepage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 10.0,right: 10),
+                  padding: const EdgeInsets.only(left: 10.0, right: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         "Date",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
                       ),
-                      SizedBox(width: 50,),
+                      SizedBox(
+                        width: 50,
+                      ),
                       Text(
                         "Cash in",
                         style: TextStyle(
@@ -220,10 +224,12 @@ class _HomepageState extends State<Homepage> {
                 title: Text("Add Data"),
                 actions: [
                   TextField(
+                    keyboardType: TextInputType.number,
                     controller: _cashin,
                     decoration: InputDecoration(hintText: 'cash in'),
                   ),
                   TextField(
+                    keyboardType: TextInputType.number,
                     controller: _cashout,
                     decoration: InputDecoration(hintText: 'cash out'),
                   ),
@@ -241,10 +247,13 @@ class _HomepageState extends State<Homepage> {
                               cashout: _cashout.text.trim(),
                               date: date,
                               day: day,
-                              uid: Provider.of<UserController>(context,listen: false).uid,
+                              uid: Provider.of<UserController>(context,
+                                      listen: false)
+                                  .uid,
                               time: time);
                           Provider.of<Datacontroller>(context, listen: false)
-                           .addDatafireBase(data: data);
+                              .addDatafireBase(data: data);
+                          Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
