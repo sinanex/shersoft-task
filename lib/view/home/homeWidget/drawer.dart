@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shersoft/controller/login.dart';
 import 'package:shersoft/view/home/accounts.dart';
+import 'package:shersoft/view/home/backup&restore.dart';
 
 Drawer drawer({BuildContext? context,String? company,String? phone}) {
   return Drawer(
@@ -41,6 +42,9 @@ Drawer drawer({BuildContext? context,String? company,String? phone}) {
           leading: Icon(Icons.track_changes),
         ),
         ListTile(
+          onTap: () {
+            Navigator.push(context!, MaterialPageRoute(builder: (context)=>BackupandRestore()));
+          },
           title: Text("Backup and Restore"),
           leading: Icon(Icons.settings_backup_restore),
         ),

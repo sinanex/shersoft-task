@@ -12,9 +12,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shersoft/view/splash.dart';
 void main() async {
   try {
+
     WidgetsFlutterBinding.ensureInitialized();
     await Hive.initFlutter();
     Hive.registerAdapter(UserAcoountDbAdapter());
+    // Hive.registerAdapter(HivebackupAdapter());
+
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );

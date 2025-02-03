@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shersoft/controller/dataController.dart';
 import 'package:shersoft/controller/login.dart';
 import 'package:shersoft/model/dataModel.dart';
+import 'package:shersoft/services/backup/backup.dart';
 import 'package:shersoft/view/home/homeWidget/drawer.dart';
 
 class Homepage extends StatefulWidget {
@@ -25,6 +26,7 @@ class _HomepageState extends State<Homepage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserController>(context, listen: false).getUserMetaData();
       Provider.of<Datacontroller>(context, listen: false).getdata();
+      // BackupServices().fetchDataFirebase();
     });
   }
 

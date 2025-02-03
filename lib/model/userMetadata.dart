@@ -12,6 +12,4 @@ class Usermetadata {
         companyName: docs['company'],
         phone: docs['phone']);
   }
-
-  
 }
