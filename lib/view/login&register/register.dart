@@ -54,7 +54,7 @@ class RegisterPage extends StatelessWidget {
                         children: [
                           Text("Already have an account"),
                           TextButton(onPressed: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
+                            Navigator.pop(context);
                           }, child: Text("Login",style: TextStyle(
                             color: Colors.blue,
                           ),)),
